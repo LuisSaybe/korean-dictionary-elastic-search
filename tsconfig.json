@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/",
+    "baseUrl": ".",
+    "lib": ["ES2015"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "typeRoots": ["node_modules/@types"],
+    "plugins": [{ "name": "typescript-tslint-plugin" }]
+  },
+  "exclude": ["node_modules"]
+}

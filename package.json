@@ -1,0 +1,28 @@
+{
+  "name": "korean-dictionary-elastic-search",
+  "version": "0.0.0",
+  "description": "A Korean dictionary backed by elastic search",
+  "author": "luis@trois.io",
+  "license": "MIT",
+  "scripts": {
+    "watch": "webpack --watch --mode=development",
+    "build": "webpack --mode=production"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.8.0",
+    "@types/jsdom": "^16.2.3",
+    "@types/node": "^14.0.24",
+    "adm-zip": "^0.4.16",
+    "express": "^4.17.1",
+    "https": "^1.0.0",
+    "jsdom": "^16.3.0",
+    "ts-loader": "^8.0.1",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.43.0",
+    "webpack-node-externals": "^2.5.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.3.12"
+  }
+}
