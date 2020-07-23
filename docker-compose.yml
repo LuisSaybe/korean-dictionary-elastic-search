@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  api:
+    command: ["nginx", "-c", "/root/project/docker/nginx.conf"]
+    image: luissaybe/korean-dictionary-elastic-search
+    ports:
+      - 80:80
+    volumes:
+      - ".:/root/project"
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
