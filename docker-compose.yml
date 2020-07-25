@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   api:
-    command: ["node", "dist/main"]
+    command: ["node", "--max-old-space-size=6144", "dist/main"]
     image: luissaybe/korean-dictionary-elastic-search
     environment:
       - DICTIONARY_API_KEY=DICTIONARY_API_KEY

@@ -19,30 +19,36 @@ export const insertWordsToElasticSearch = async () => {
     zipEntriesIndex < zipEntries.length;
     zipEntriesIndex++
   ) {
-    const dom = new jsdom.JSDOM(
-      zipEntries[zipEntriesIndex].getData().toString("utf8")
+    const dom = new jsdom.JSDOM();
+    const domParser = new dom.window.DOMParser();
+    const doc = domParser.parseFromString(
+      zipEntries[zipEntriesIndex].getData().toString("utf8"),
+      "application/xml"
     );
-    const lexicalEntries = dom.window.document.querySelectorAll("LexicalEntry");
+    const result = doc.evaluate(
+      "//LexicalEntry/@val",
+      doc,
+      null,
+      dom.window.XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+      null
+    );
+    let attribute = result.iterateNext();
 
-    for (
-      let lexicalEntryIndex = 0;
-      lexicalEntryIndex < lexicalEntries.length;
-      lexicalEntryIndex++
-    ) {
-      const entry = lexicalEntries[lexicalEntryIndex];
-      const q = (entry as any).getAttribute("val");
-      const xml = await getDefinition(q);
-      console.log(
-        `${zipEntriesIndex} / ${zipEntries.length} - ${lexicalEntryIndex} / ${lexicalEntries.length} - q = ${q}`
-      );
+    while (attribute) {
+      const xml = await getDefinition(attribute.value);
 
       client.index({
-        id: q,
+        id: attribute.value,
         index: ENTRY_INDEX_NAME,
         body: {
           xml,
         },
       });
+
+      console.log(
+        `zipEntriesIndex = ${zipEntriesIndex} / ${zipEntries.length} - q ${attribute.value}`
+      );
+      attribute = result.iterateNext();
     }
   }
 

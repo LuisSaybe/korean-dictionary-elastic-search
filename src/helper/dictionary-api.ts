@@ -1,7 +1,7 @@
 import request from "request-promise-native";
 
 const VIEW_URL = "https://krdict.korean.go.kr/api/view";
-const timeout = 60000;
+const timeout = 3 * 60 * 1000;
 
 export const getDefinition = (q) => {
   return request({
