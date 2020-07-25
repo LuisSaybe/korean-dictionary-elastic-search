@@ -1,35 +1,12 @@
-import express, { RequestHandler } from "express";
-import { Client } from "@elastic/elasticsearch";
+import express from "express";
 
-import { insertWordsToElasticSearch } from "src/helper/import";
+import { ENTRY_INDEX_NAME } from "src/helper/elastic";
+import { handler as GET_ENTRY_ROUTE } from "src/routes/entry/get";
+import { handler as IMPORT_ROUTE } from "src/routes/entry/import";
 
 const app = express();
-const client = new Client({ node: "http://elastic:9200" });
 
-const ENTRY = "entry";
-
-const handler: RequestHandler = async (_, res) => {
-  insertWordsToElasticSearch(client, ENTRY);
-  res.sendStatus(200);
-};
-
-const getEntry: RequestHandler = async (req, res, next) => {
-  try {
-    const { body } = await client.search({
-      index: ENTRY,
-      body: {
-        query: {
-          match: { q: req.params.q },
-        },
-      },
-    });
-    res.json(body.hits);
-  } catch (error) {
-    next(error);
-  }
-};
-
-app.post("/index", handler);
-app.get("/index/:q(\\d+)", getEntry);
+app.post("/import", IMPORT_ROUTE);
+app.get(`/${ENTRY_INDEX_NAME}/:id(\\d+)`, GET_ENTRY_ROUTE);
 
 app.listen(80, () => console.log("server started on port 80"));
