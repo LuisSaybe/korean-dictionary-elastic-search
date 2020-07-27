@@ -53,6 +53,8 @@ export const insertWordsToElasticSearch = async () => {
   }
 
   fs.unlink(fileName, (e) => {
-    console.error(e);
+    if (e) {
+      console.error(e);
+    }
   });
 };

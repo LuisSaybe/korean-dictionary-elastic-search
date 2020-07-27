@@ -20,3 +20,18 @@ yarn watch
 ```bash
 node dist
 ```
+
+### Wildcard certs
+
+Create a ~/.credentials.ini with the following data
+
+```sh
+dns_digitalocean_token = YOUR_DIGITALOCEAN_API_TOKEN
+```
+
+```sh
+apt update -y
+add-apt-repository -y ppa:certbot/certbot
+apt install -y certbot python3-certbot-dns-digitalocean
+certbot certonly --dns-digitalocean --dns-digitalocean-credentials ~/credentials.ini  -d seoullatte.com -d *.seoullatte.com
+```

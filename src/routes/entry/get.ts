@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import cors from "cors";
+import compression from "compression";
 
 import { client, ENTRY_INDEX_NAME } from "src/helper/elastic";
 
@@ -23,5 +24,6 @@ export const handler = [
   cors({
     origin: ["https://seoullatte.com", "http://seoullatte.local"],
   }),
+  compression(),
   route,
 ];
