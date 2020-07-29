@@ -3,13 +3,17 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 
-import { ENTRY_INDEX_NAME } from "src/helper/elastic";
+import { Index } from "src/definition/elastic";
+import { initClient } from "src/helper/elastic";
 import { handler as GET_ENTRY_ROUTE } from "src/routes/entry/get";
+import { handler as SEARCH_ENTRY_ROUTE } from "src/routes/entry/search";
 import { writeDictionaryToElasticSearch } from "src/helper/write-dictionary-to-elastic";
+import { client } from "src/helper/elastic";
 
 const app = express();
 
-app.get(`/${ENTRY_INDEX_NAME}/:id(\\d+)`, GET_ENTRY_ROUTE);
+app.get(`/${Index.entry}/:id(\\d+)`, GET_ENTRY_ROUTE);
+app.get(`/${Index.entry}`, SEARCH_ENTRY_ROUTE);
 
 if (process.env.SSL_CERTS_FOLDER) {
   const privateKey = fs.readFileSync(
@@ -33,6 +37,8 @@ if (process.env.SSL_CERTS_FOLDER) {
   wait for elasticsearch to start then import
 */
 
-setTimeout(() => {
+setTimeout(async () => {
+  await initClient(client);
+  console.log("client initialized");
   writeDictionaryToElasticSearch();
-}, 10000);
+}, 30 * 1000);

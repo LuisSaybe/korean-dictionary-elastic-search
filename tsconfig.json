@@ -5,7 +5,7 @@
     "inlineSources": true,
     "sourceRoot": "/",
     "baseUrl": ".",
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "es2019"],
     "module": "esnext",
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types"],

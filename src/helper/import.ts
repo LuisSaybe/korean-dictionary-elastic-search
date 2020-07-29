@@ -2,9 +2,10 @@ import AdmZip from "adm-zip";
 import fs from "fs";
 import * as jsdom from "jsdom";
 
+import { Index } from "src/definition/elastic";
 import { writeExcelFile } from "src/helper/dictionary";
 import { getDefinition } from "src/helper/dictionary-api";
-import { client, ENTRY_INDEX_NAME } from "src/helper/elastic";
+import { client } from "src/helper/elastic";
 
 export const insertWordsToElasticSearch = async () => {
   const time = new Date().getTime();
@@ -39,7 +40,7 @@ export const insertWordsToElasticSearch = async () => {
 
       client.index({
         id: attribute.value,
-        index: ENTRY_INDEX_NAME,
+        index: Index.entry,
         body: {
           xml,
         },

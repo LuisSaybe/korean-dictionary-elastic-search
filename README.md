@@ -18,7 +18,7 @@ yarn watch
 ### Run project
 
 ```bash
-node dist
+node dist/main
 ```
 
 ### Wildcard certs

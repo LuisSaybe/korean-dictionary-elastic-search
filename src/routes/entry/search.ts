@@ -1,17 +1,29 @@
 import { RequestHandler } from "express";
 import compression from "compression";
 
-import { Index } from "src/definition/elastic";
+import { Index, EntryField } from "src/definition/elastic";
 import { client } from "src/helper/elastic";
 import { DEFAULT_CORS } from "src/helper/cors";
 
 export const route: RequestHandler = async (req, res, next) => {
+  if (!req.query.query || Array.isArray(req.query.query)) {
+    res.status(400).json(`exactly 1 "query" param is required`);
+    return;
+  }
+  const fields = [EntryField.word, EntryField.englishTranslationWord]
+    .map((field) => [field, `${field}._2gram`, `${field}._3gram`])
+    .flat();
+
   try {
     const { body } = await client.search({
       index: Index.entry,
       body: {
         query: {
-          match: { _id: req.params.id },
+          multi_match: {
+            query: req.query.query,
+            type: "bool_prefix",
+            fields,
+          },
         },
       },
     });
