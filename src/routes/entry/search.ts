@@ -25,6 +25,7 @@ export const route: RequestHandler = async (req, res, next) => {
             fields,
           },
         },
+        sort: ["_score"],
       },
     });
     res.json(body.hits.hits);
