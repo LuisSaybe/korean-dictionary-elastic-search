@@ -18,6 +18,8 @@ export const route: RequestHandler = async (req, res, next) => {
     const { body } = await client.search({
       index: Index.entry,
       body: {
+        from: 0,
+        size: 5,
         query: {
           multi_match: {
             query: req.query.query,
