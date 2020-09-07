@@ -21,13 +21,21 @@ export const route: RequestHandler = async (req, res, next) => {
         from: 0,
         size: 5,
         query: {
-          multi_match: {
-            query: req.query.query,
-            type: "bool_prefix",
-            fields,
+          bool: {
+            should : [
+              { term : { word_grades : "초급" } }
+            ],
+            must : [
+              {
+                multi_match: {
+                  query: req.query.query,
+                  type: "bool_prefix",
+                  fields,
+                }
+              },
+            ]
           },
-        },
-        sort: ["_score"],
+        }
       },
     });
     res.json(body.hits.hits);

@@ -31,6 +31,9 @@ export const writeDictionaryToElasticSearch = async () => {
       const xml = serializer.serializeToString(modifiedXML.documentElement);
       const doc = domParser.parseFromString(xml, "application/xml");
       const word = doc.querySelector("item word_info word").textContent;
+      const word_grades = [...doc.querySelectorAll("word_grade")].map(
+        (element) => element.textContent
+      );
       const translations = {};
 
       for (const sense of doc.querySelectorAll("sense_info")) {
@@ -51,6 +54,7 @@ export const writeDictionaryToElasticSearch = async () => {
 
       if (index % 1000 === 0) {
         console.log(`index = ${index} _id=${_id} word=${word}`);
+        console.log("grades", word_grades);
       }
 
       await client.index({
@@ -59,6 +63,7 @@ export const writeDictionaryToElasticSearch = async () => {
         body: {
           xml,
           word,
+          word_grades,
           ...translations,
         },
       });
