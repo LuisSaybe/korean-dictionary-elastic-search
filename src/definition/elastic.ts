@@ -3,6 +3,7 @@ export enum EntryField {
   xml = "xml",
   word = "word",
   senses = "senses",
+  word_grades = 'word_grades',
   englishTranslationWord = "englishTranslationWord",
   japaneseTranslationWord = "japaneseTranslationWord",
   frenchTranslationWord = "frenchTranslationWord",

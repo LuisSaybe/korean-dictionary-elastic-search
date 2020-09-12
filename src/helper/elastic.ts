@@ -10,6 +10,7 @@ export async function initClient(client: Client) {
       mappings: {
         properties: {
           [EntryField.xml]: { enabled: false },
+          [EntryField.word_grades]: { type: "keyword" },
           [EntryField.word]: {
             type: "search_as_you_type",
             analyzer: "standard",

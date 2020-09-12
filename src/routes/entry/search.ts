@@ -4,13 +4,14 @@ import compression from "compression";
 import { Index, EntryField } from "src/definition/elastic";
 import { client } from "src/helper/elastic";
 import { DEFAULT_CORS } from "src/helper/cors";
+import { WordGrade } from "src/definition/korean-open-api";
 
 export const route: RequestHandler = async (req, res, next) => {
   if (!req.query.query || Array.isArray(req.query.query)) {
     res.status(400).json(`exactly 1 "query" param is required`);
     return;
   }
-  const fields = [EntryField.word, EntryField.englishTranslationWord]
+  const fields = [EntryField.word, EntryField.englishTranslationWord, EntryField.frenchTranslationWord]
     .map((field) => [field, `${field}._2gram`, `${field}._3gram`])
     .flat();
 
@@ -22,10 +23,12 @@ export const route: RequestHandler = async (req, res, next) => {
         size: 5,
         query: {
           bool: {
-            should : [
-              { term : { word_grades : "초급" } }
+            should: [
+              { term : { word_grades : WordGrade.beginner } },
+              { term : { word_grades : WordGrade.intermediate } },
+              { term : { word_grades : WordGrade.advanced } }
             ],
-            must : [
+            must: [
               {
                 multi_match: {
                   query: req.query.query,
@@ -33,7 +36,7 @@ export const route: RequestHandler = async (req, res, next) => {
                   fields,
                 }
               },
-            ]
+            ],
           },
         }
       },

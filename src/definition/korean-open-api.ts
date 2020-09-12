@@ -11,6 +11,13 @@ export enum LanguageCode {
   russian = 10,
 }
 
+export enum WordGrade {
+  none = '없음',
+  beginner = '초급',
+  intermediate = '중급',
+  advanced = '고급'
+}
+
 export enum LanguageNames {
   english = "영어",
   japanese = "일본어",

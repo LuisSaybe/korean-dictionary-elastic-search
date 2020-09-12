@@ -15,10 +15,26 @@ Dictionary content provided by [National Institute of Korean Language Open API](
 yarn watch
 ```
 
-### Run project
+### Run project in dev mode with docker-compose
 
-```bash
-node dist/main
+```yaml
+version: "3.7"
+
+services:
+  api:
+    command: ["node", "dist/main"]
+    image: luissaybe/korean-dictionary-elastic-search
+    volume:
+      ./:/root/project
+    ports:
+      - 9000:80
+    depends_on:
+      - elastic
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    environment:
+      - discovery.type=single-node
+
 ```
 
 ### Wildcard certs

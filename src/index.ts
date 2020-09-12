@@ -37,8 +37,20 @@ if (process.env.SSL_CERTS_FOLDER) {
   wait for elasticsearch to start then import
 */
 
-setTimeout(async () => {
-  await initClient(client);
-  console.log("client initialized");
+const initializeElasticSearch = async () => {
+
+  for (;;) {
+    try {
+      console.log('Attempting connection...')
+      await initClient(client);
+      break;
+    } catch {
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+
   writeDictionaryToElasticSearch();
-}, 30 * 1000);
+};
+
+initializeElasticSearch();
