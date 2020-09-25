@@ -9,7 +9,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types"],
-    "plugins": [{ "name": "typescript-tslint-plugin" }]
   },
   "exclude": ["node_modules"]
 }

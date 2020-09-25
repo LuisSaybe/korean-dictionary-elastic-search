@@ -41,7 +41,6 @@ const initializeElasticSearch = async () => {
 
   for (;;) {
     try {
-      console.log('Attempting connection...')
       await initClient(client);
       break;
     } catch {

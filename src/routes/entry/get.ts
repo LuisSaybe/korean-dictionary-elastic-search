@@ -15,7 +15,11 @@ export const route: RequestHandler = async (req, res, next) => {
         },
       },
     });
-    res.json(body.hits.hits);
+    if (body.hits.hits.length === 0) {
+      res.status(404).end();
+    } else {
+      res.json(body.hits.hits);
+    }
   } catch (error) {
     next(error);
   }

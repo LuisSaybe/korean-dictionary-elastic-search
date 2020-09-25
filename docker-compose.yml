@@ -5,11 +5,9 @@ services:
     command: ["node", "dist/main"]
     image: luissaybe/korean-dictionary-elastic-search
     ports:
-      - 443:443
-    environment:
-      - SSL_CERTS_FOLDER=/root/certs
+      - 9000:80
     volumes:
-      - /root/certs:/root/certs
+      - .:/root/project
     depends_on:
       - elastic
   elastic:
