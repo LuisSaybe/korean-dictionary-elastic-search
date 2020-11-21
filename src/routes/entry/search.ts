@@ -101,7 +101,7 @@ export const handler = [
       },
       from: {
         type: "string",
-        pattern: "^[0-9]{1,3}$",
+        pattern: "^[0-9]{1,5}$",
       },
       size: {
         type: "string",
