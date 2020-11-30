@@ -19,6 +19,7 @@ export const writeDictionaryToElasticSearch = async () => {
   const inputStream = fs.createReadStream(dictionaryGzipFile);
   const outputStream = fs.createWriteStream(jsonEntriesFile);
   const readLines = async () => {
+    const WORD_SPLIT_REGEX = new RegExp(",|;");
     const lines = readline.createInterface({
       input: fs.createReadStream(jsonEntriesFile),
     });
@@ -32,7 +33,7 @@ export const writeDictionaryToElasticSearch = async () => {
       const doc = domParser.parseFromString(xml, "application/xml");
       const word = doc.querySelector("item word_info word").textContent;
       const word_grades = [...doc.querySelectorAll("word_grade")].map(
-        (element) => element.textContent
+        (element) => element.textContent,
       );
       const translations = {};
 
@@ -48,7 +49,12 @@ export const writeDictionaryToElasticSearch = async () => {
             translations[field] = [];
           }
 
-          translations[field].push(translationWord);
+          const translationWords = translationWord
+            .split(WORD_SPLIT_REGEX)
+            .map((word) => word.trim())
+            .filter((word) => word.length > 0);
+
+          translations[field].push(...translationWords);
         }
       }
 
