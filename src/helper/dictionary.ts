@@ -4,7 +4,7 @@ import * as fs from "fs";
 export function writeExcelFile(location: string) {
   const file = fs.createWriteStream(location);
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     https
       .get(
         "https://luissaybe.nyc3.digitaloceanspaces.com/seoul-latte/dictionary/716118.zip",
@@ -14,7 +14,7 @@ export function writeExcelFile(location: string) {
             file.close();
             resolve();
           });
-        }
+        },
       )
       .on("error", reject);
   });
@@ -23,7 +23,7 @@ export function writeExcelFile(location: string) {
 export function downloadDictionary(location: string) {
   const file = fs.createWriteStream(location);
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     https
       .get(
         "https://luissaybe.nyc3.digitaloceanspaces.com/seoul-latte/dictionary/entry.json.gz",
@@ -33,7 +33,7 @@ export function downloadDictionary(location: string) {
             file.close();
             resolve();
           });
-        }
+        },
       )
       .on("error", reject);
   });
