@@ -6,6 +6,7 @@ import zlib from "zlib";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
+import { WordGrade } from "src/definition/korean-open-api";
 import { removeWhiteSpaceFromXML } from "src/helper/xml";
 import { downloadDictionary } from "src/helper/dictionary";
 import {
@@ -23,6 +24,7 @@ const readLines = async (jsonEntriesFile: string) => {
 
   await createTables(db);
 
+  const excludeIfDoesNotHaveWordGrade = false;
   const dom = new jsdom.JSDOM();
   const domParser = new dom.window.DOMParser();
   const serializer = new dom.window.XMLSerializer();
@@ -37,6 +39,12 @@ const readLines = async (jsonEntriesFile: string) => {
     const modifiedXML = removeWhiteSpaceFromXML(_source.xml);
     const xml = serializer.serializeToString(modifiedXML.documentElement);
     const doc = domParser.parseFromString(xml, "application/xml");
+    const word_grade = doc.querySelector("item word_info word_grade")
+      .textContent;
+
+    if (excludeIfDoesNotHaveWordGrade && word_grade === WordGrade.none) {
+      continue;
+    }
 
     await Promise.all([
       insertEntry(db, doc),
@@ -44,8 +52,14 @@ const readLines = async (jsonEntriesFile: string) => {
       insertExampleInfo(db, doc),
     ]);
 
+    if (index % 100 === 0) {
+      console.log("index =", index);
+    }
+
     index++;
   }
+
+  console.log("finished importing sqllite database");
 
   db.close();
 };

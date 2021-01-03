@@ -1,19 +1,6 @@
-import * as jsdom from "jsdom";
-
 import { LanguageNames } from "src/definition/korean-open-api";
 
 export function insertEntry(db, doc) {
-  /*
-  console.log(
-    doc.querySelector("item word_info pronunciation"),
-    doc.querySelector("item word_info word_grade"),
-    doc.querySelector("item word_info word_type"),
-    doc.querySelector("item word_info pos"),
-    doc.querySelector("item word_info sup_no"),
-    doc.querySelector("item word_unit"),
-    doc.querySelector("item word_info word"),
-  );*/
-
   const target_code = Number(doc.querySelector("item target_code").textContent);
   const word = doc.querySelector("item word_info word").textContent;
   const word_unit = doc.querySelector("item word_unit").textContent;
@@ -52,16 +39,30 @@ export function insertEntry(db, doc) {
 
       return result;
     });
-  const conjugationsAsJson = JSON.stringify(conjugations);
 
-  if (doc.querySelectorAll("item word_info word_grade").length > 1) {
-    const word_grades = [
-      ...doc.querySelectorAll("item word_info word_grade"),
-    ].map((node) => node.textContent);
-    console.log("ARE MANY WORD GRADES FOR", target_code, word, word_grades);
-  }
+  const conjugationRows = conjugations
+    .map((conjugation, index) => [
+      target_code,
+      index,
+      conjugation.conjugation_info,
+      conjugation.abbreviation,
+      conjugation.abbreviationPronunciation,
+    ])
+    .map((row) =>
+      db.run(
+        `
+        INSERT INTO conju_info (
+        target_code,
+        conju_info_index,
+        conjugation,
+        abbreviation,
+        pronunciation
+      ) VALUES (?, ?, ?, ?, ?)`,
+        row,
+      ),
+    );
 
-  return db.run(
+  const entryPromise = db.run(
     `
     INSERT INTO entry (
     target_code,
@@ -70,22 +71,20 @@ export function insertEntry(db, doc) {
     sup_no,
     word_type,
     pronunciation,
-    conjugations,
     pos,
     word_grade
-  ) VALUES (${Array.from(new Array(9))
-    .map(() => "?")
-    .join(",")})`,
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     target_code,
     word,
     word_unit,
     sup_no,
     word_type,
     pronunciation,
-    conjugationsAsJson,
     pos,
     word_grade,
   );
+
+  return Promise.all([entryPromise, ...conjugationRows]);
 }
 
 function extractTransWordAndDfn(senseDoc, languge: String) {
@@ -257,9 +256,10 @@ export function createTables(db) {
       pos TEXT NOT NULL,
       word_type TEXT NOT NULL,
       pronunciation TEXT,
-      conjugations TEXT,
       word_grade TEXT NOT NULL
-    ) WITHOUT ROWID`),
+    ) WITHOUT ROWID;
+    CREATE INDEX entry_word_grade_index ON entry (word_grade);
+    `),
     db.exec(`
     CREATE TABLE sense_info (
       target_code INTEGER NOT NULL,
@@ -286,7 +286,9 @@ export function createTables(db) {
       russian TEXT,
       russian_dfn TEXT,
       PRIMARY KEY (target_code, sense_index)
-    ) WITHOUT ROWID`),
+    ) WITHOUT ROWID;
+    CREATE INDEX sense_info_target_code_index ON sense_info (target_code);
+    `),
     db.exec(`
     CREATE TABLE example_info (
       target_code INTEGER NOT NULL,
@@ -295,6 +297,20 @@ export function createTables(db) {
       type TEXT NOT NULL,
       example TEXT NOT NULL,
       PRIMARY KEY (target_code, sense_index, example_info_index)
-    ) WITHOUT ROWID`),
+    ) WITHOUT ROWID;
+    CREATE INDEX example_info_target_code_index ON example_info (target_code);
+    `),
+    ,
+    db.exec(`
+    CREATE TABLE conju_info (
+      target_code INTEGER NOT NULL,
+      conju_info_index INTEGER NOT NULL,
+      conjugation TEXT,
+      abbreviation TEXT,
+      pronunciation TEXT,
+      PRIMARY KEY (target_code, conju_info_index)
+    ) WITHOUT ROWID;
+    CREATE INDEX conju_info_target_code_index ON conju_info (target_code);
+    `),
   ]);
 }
