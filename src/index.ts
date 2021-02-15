@@ -18,15 +18,15 @@ app.get(`/${Index.entry}`, SEARCH_ENTRY_ROUTE);
 if (process.env.SSL_CERTS_FOLDER) {
   const privateKey = fs.readFileSync(
     path.resolve(process.env.SSL_CERTS_FOLDER, "privkey.pem"),
-    "utf8"
+    "utf8",
   );
   const certificate = fs.readFileSync(
     path.resolve(process.env.SSL_CERTS_FOLDER, "fullchain.pem"),
-    "utf8"
+    "utf8",
   );
   const httpsServer = https.createServer(
     { key: privateKey, cert: certificate },
-    app
+    app,
   );
   httpsServer.listen(443);
 } else {
@@ -38,13 +38,13 @@ if (process.env.SSL_CERTS_FOLDER) {
 */
 
 const initializeElasticSearch = async () => {
-
   for (;;) {
+    console.log("waiting to connect to elastic");
+
     try {
       await initClient(client);
       break;
-    } catch {
-    }
+    } catch {}
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }

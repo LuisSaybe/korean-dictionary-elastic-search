@@ -1,13 +1,25 @@
 import { RequestHandler } from "express";
 import compression from "compression";
+import LRU from "lru-cache";
 
 import { Index } from "src/definition/elastic";
 import { client } from "src/helper/elastic";
 import { DEFAULT_CORS } from "src/helper/cors";
 
+const cache = new LRU(5000);
+
 export const route: RequestHandler = async (req, res, next) => {
+  const cachedBody = cache.get(req.params.id);
+
+  if (cachedBody) {
+    res.json(cachedBody);
+    return;
+  }
+
+  let body;
+
   try {
-    const { body } = await client.search({
+    const response = await client.search({
       index: Index.entry,
       body: {
         query: {
@@ -15,13 +27,17 @@ export const route: RequestHandler = async (req, res, next) => {
         },
       },
     });
-    if (body.hits.hits.length === 0) {
-      res.status(404).end();
-    } else {
-      res.json(body.hits.hits);
-    }
+    body = response.body;
   } catch (error) {
     next(error);
+    return;
+  }
+
+  if (body.hits.hits.length === 0) {
+    res.status(404).end();
+  } else {
+    cache.set(req.params.id, body.hits.hits);
+    res.json(body.hits.hits);
   }
 };
 

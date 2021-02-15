@@ -49,12 +49,14 @@ export const writeDictionaryToElasticSearch = async () => {
             translations[field] = [];
           }
 
-          const translationWords = translationWord
-            .split(WORD_SPLIT_REGEX)
+          const translationWords = translationWord.split(WORD_SPLIT_REGEX);
+          translationWords.push(translationWord);
+
+          const searchTerms = translationWords
             .map((word) => word.trim())
             .filter((word) => word.length > 0);
 
-          translations[field].push(...translationWords);
+          translations[field].push(...searchTerms);
         }
       }
 
