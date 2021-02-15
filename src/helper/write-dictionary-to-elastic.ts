@@ -49,10 +49,8 @@ export const writeDictionaryToElasticSearch = async () => {
             translations[field] = [];
           }
 
-          const translationWords = translationWord.split(WORD_SPLIT_REGEX);
-          translationWords.push(translationWord);
-
-          const searchTerms = translationWords
+          const searchTerms = translationWord
+            .split(WORD_SPLIT_REGEX)
             .map((word) => word.trim())
             .filter((word) => word.length > 0);
 

@@ -12,6 +12,7 @@ export const route: RequestHandler = async (req, res, next) => {
   const cachedBody = cache.get(req.params.id);
 
   if (cachedBody) {
+    res.setHeader("seoullatte-cache-hit", "true");
     res.json(cachedBody);
     return;
   }
