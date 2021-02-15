@@ -21,6 +21,11 @@ export async function initClient(client: Client) {
             analyzer: "standard",
             search_analyzer: "standard",
           },
+          [EntryField.frenchTranslationWord]: {
+            type: "search_as_you_type",
+            analyzer: "standard",
+            search_analyzer: "standard",
+          },
         },
       },
     },
