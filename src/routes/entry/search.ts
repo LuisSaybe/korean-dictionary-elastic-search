@@ -7,7 +7,7 @@ import { DEFAULT_CORS } from "src/helper/cors";
 import { WordGrade } from "src/definition/korean-open-api";
 import { queryValidator } from "src/middleware/query-validator";
 
-export const route: RequestHandler = async (req, res, next) => {
+const route: RequestHandler = async (req, res, next) => {
   const bool = {
     should: [],
     must: [],

@@ -8,7 +8,7 @@ import { DEFAULT_CORS } from "src/helper/cors";
 
 const cache = new LRU(5000);
 
-export const route: RequestHandler = async (req, res, next) => {
+const route: RequestHandler = async (req, res, next) => {
   const cachedBody = cache.get(req.params.id);
 
   if (cachedBody) {
