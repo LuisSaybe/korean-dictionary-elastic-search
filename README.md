@@ -18,23 +18,35 @@ yarn watch
 ### Run project in dev mode with docker-compose
 
 ```yaml
-version: "3.7"
+version: "3.8"
 
 services:
+  install:
+    image: luissaybe/korean-dictionary-elastic-search
+    command: ["yarn"]
+    volumes:
+      - ./:/root/project
+  watch:
+    image: luissaybe/korean-dictionary-elastic-search
+    command: ["yarn", "watch"]
+    volumes:
+      - ./:/root/project
+    depends_on:
+      - install
   api:
     command: ["node", "dist/main"]
     image: luissaybe/korean-dictionary-elastic-search
-    volume:
-      ./:/root/project
+    volumes:
+      - ./:/root/project
     ports:
       - 9000:80
     depends_on:
       - elastic
+      - watch
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
     environment:
       - discovery.type=single-node
-
 ```
 
 ### Wildcard certs
